@@ -1,0 +1,21 @@
+version: '3.8'
+services: 
+  client:
+    build: ./fe
+    container_name: fe
+    stdin_open: true
+    ports: 
+      - '3000:3000'
+    volumes:
+      - ./fe:/fe
+    environment:
+      - WATCHPACK_POLLING=true
+  api: 
+    build: ./be
+    container_name: be
+    ports: 
+      - '8080:8080'
+    volumes: 
+      - ./be:/be
+    environment: 
+      - WATCHPACK_POLLING=true
