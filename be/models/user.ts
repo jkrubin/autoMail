@@ -1,4 +1,4 @@
-import { Table, Model, Column, UpdatedAt, CreatedAt, BeforeCreate, BeforeUpdate, Unique, DataType, HasMany } from 'sequelize-typescript'
+import { Table, Model, Column, UpdatedAt, CreatedAt, BeforeCreate, BeforeUpdate, Unique, DataType, HasMany, ForeignKey, BelongsToMany } from 'sequelize-typescript'
 import bcrypt from 'bcrypt'
 import { DocType } from './docType'
 import { Field } from './field'
@@ -30,6 +30,9 @@ export class User extends Model {
 
     @HasMany(() => Field)
     fields!: Field[]
+
+    @BelongsToMany(() => Permission, () => UserPermission)
+    permissions!: Permission[];
     
     @BeforeCreate
     @BeforeUpdate
@@ -44,4 +47,27 @@ export class User extends Model {
         return  bcrypt.compareSync(password, this.password)
     }
 
+}
+
+export type PermissionRole = "USER" | "ADMIN";
+
+@Table
+export class Permission extends Model{
+    
+    @Column(DataType.TEXT)
+    role!: PermissionRole
+
+    @BelongsToMany(()=> User, () => UserPermission)
+    users!: User[]
+
+}
+@Table 
+export class UserPermission extends Model{
+    @ForeignKey(() => User)
+    @Column
+    userId!: number
+
+    @ForeignKey(() => Permission)
+    @Column
+    permissionId!: number
 }

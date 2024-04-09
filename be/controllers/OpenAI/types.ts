@@ -1,4 +1,9 @@
 
+export type ChatMessage = {
+    role: string;
+    content: string;
+}
+
 type CategoryField = {
     field: string;
     field_description: string;

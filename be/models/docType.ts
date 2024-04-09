@@ -1,7 +1,6 @@
-import { BelongsTo, BelongsToMany, Column, CreatedAt, DataType, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
-import { DocTypeField } from "./docTypeField";
-import { Field } from "./field";
+import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, CreatedAt, DataType, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
 import { User } from "./user";
+import { Field } from "./field";
 
 @Table
 export class DocType extends Model {
@@ -13,6 +12,9 @@ export class DocType extends Model {
     @Column
     name!: string;
 
+    @Column
+    snakeName!: string;
+
     @Column(DataType.TEXT)
     description!: string
 
@@ -22,6 +24,17 @@ export class DocType extends Model {
     @UpdatedAt
     updatedAt!: string;
 
+    @BeforeCreate
+    @BeforeUpdate
+    static createSnakeCaseName(docType: DocType){
+        if(docType.changed('name')){
+            const snakeName = docType.get('name').replace(/\s+/g, '_')
+            .replace(/[^\w\s]/g, '')
+            .toLowerCase()
+            docType.snakeName = snakeName
+        }
+    }
+
     @BelongsTo(() => User)
     user!: User;
 
@@ -29,3 +42,15 @@ export class DocType extends Model {
     fields!: Field[];
   
 }
+
+@Table
+export class DocTypeField extends Model {
+    @ForeignKey(() => DocType)
+    @Column
+    docTypeId!: number;
+
+    @ForeignKey(() => Field)
+    @Column
+    fieldId!: number;
+}
+

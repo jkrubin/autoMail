@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "../../models/user";
+import { Permission, PermissionRole, User } from "../../models/user";
 import jwt, { Secret, JwtPayload, Jwt } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev'
@@ -39,5 +39,32 @@ export const login = async(req: Request, res: Response) => {
     }
     user = await user.update({jwt: signUser(user)})
     return res.send(user.toJSON())
+
+}
+
+export const checkPermission = async(req: Request, res: Response, next: () => {}, roles: PermissionRole[]) => {
+    const { id } = req.body
+    const token = req.headers['x-access-token'] as any as string
+
+    if(!token) {
+        return res.status(401).send({auth: false, message: 'You are not logged in'})
+    }
+    jwt.verify(token, JWT_SECRET, async (err, token) => {
+        if(err){
+            return res.status(500).send({message: "Your login session has expired"})
+        }else{
+            const user = await User.findOne({where: {id: id}, include: [Permission]})
+            if(!user) {
+                return res.status(500).send({message: "No matching user found"})
+            }
+            console.log(user.permissions)
+            if(user.permissions.some(permission => roles.includes(permission.role))){
+                next();
+            }else{
+                return res.status(403).send({message: "You do not have permission to do this"})
+            }
+
+        }
+    })
 
 }

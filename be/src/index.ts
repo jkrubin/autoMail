@@ -19,7 +19,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use('/v1', router)
 
 
-sequelize.sync({force: true}).then(()=>{
+sequelize.sync().then(()=>{
     app.listen(port, () => {
         console.log(`Server is now listening on port ${port}`)
     })

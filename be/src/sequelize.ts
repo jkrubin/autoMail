@@ -1,8 +1,6 @@
 import { Sequelize, SequelizeOptions } from "sequelize-typescript";
-import { User } from "../models/user";
-// import { Field, DocType, DocTypeField } from "../models/test";
-import { DocTypeField } from "../models/docTypeField";
-import { DocType } from "../models/docType";
+import { Permission, User, UserPermission } from "../models/user";
+import { DocType, DocTypeField } from "../models/docType";
 import { Field } from "../models/field";
 const env = process.env.NODE_ENV || 'development';
 
@@ -32,6 +30,8 @@ const config: Record<string, SequelizeOptions> = {
 
 const models = [
   User,
+  Permission,
+  UserPermission,
   DocType,
   Field,
   DocTypeField
