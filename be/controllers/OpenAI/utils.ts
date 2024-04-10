@@ -1,14 +1,16 @@
 import OpenAI from "openai";
+import dotenv from "dotenv"
 import { DocType } from "../../models/docType";
 import { Field } from "../../models/field";
-import { ChatMessage } from "./types";
+import { ChatCompletion, ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources";
+dotenv.config()
 const OPENAI_MODEL = "gpt-3.5-turbo-0125";
 
-// const openai = new OpenAI({
-//     apiKey: process.env['OPENAI_API_KEY']
-// })
+const openai = new OpenAI({
+    apiKey: process.env['OPENAI_API_KEY']
+})
 
-const generateMessages = (context: string, task: string): ChatMessage[] => {
+const generateMessages = (context: string, task: string): ChatCompletionMessageParam[] => {
     return [
         {
             role: "system",
@@ -32,7 +34,7 @@ export const categorizeText = async (docTypes: DocType[], text: string) => {
     })
     const context = `Read the Context text, and classify it into one of the following categories. Each category will have a name, an identifier, and a description. Match which description fits the context the best and give the identifier\n${categoriesFromDocTypes}`
     const enumsFromDocTypes = docTypes.map((docType) => docType.get('snakeName'))
-    const categorizeTool = {
+    const categorizeTool: ChatCompletionTool = {
         type: "function",
         function: {
             name: "create_category",
@@ -47,12 +49,37 @@ export const categorizeText = async (docTypes: DocType[], text: string) => {
                     }
                 },
                 required: ["category"]
-            }
+            },
 
         }
     }
-    const messages: ChatMessage[] = generateMessages(context, text)
-    console.log(messages, categorizeTool)
+    const messages: ChatCompletionMessageParam[] = generateMessages(context, text)
+    console.log(messages)
+    const openAiRes: ChatCompletion = await openai.chat.completions.create({
+        messages: messages,
+        model: OPENAI_MODEL,
+        tools: [categorizeTool],
+        tool_choice: {
+            type: "function",
+            function: {
+                name: categorizeTool.function.name
+            }
+        }
+    })
+    console.log(openAiRes)
+    try{
+        const toolCalls = openAiRes?.choices[0]?.message?.tool_calls
+        if(toolCalls?.length){
+            console.log(toolCalls)
+            const category = toolCalls[0].function.arguments
+            console.log(category)
+            return category
+        }
+
+    }catch(err){
+        console.log(err)
+        return false
+    }
 }
 
 export const extractValuesFromText = async (docType: DocType, text: string) => {

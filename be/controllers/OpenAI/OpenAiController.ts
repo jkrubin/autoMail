@@ -9,4 +9,5 @@ export const processText = async (req: Request, res: Response) => {
         return res.status(404).send()
     }
     let openAiRes = await categorizeText(docTypes, text)
+    return res.send(openAiRes)
 }

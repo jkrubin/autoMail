@@ -1,25 +1,4 @@
-
-export type ChatMessage = {
-    role: string;
-    content: string;
-}
-
-type CategoryField = {
-    field: string;
-    field_description: string;
-}
-
-type EmailCategory = {
-    category: string;
-    output: CategoryField[]
-}
-
-type CategorizeEmailObject = {
-    email: string;
-    categories: EmailCategory[]
-}
-
-const testObj: CategorizeEmailObject = {
+const testObj = {
     "email": "Hello, I am running late and I cannot be there on time for my 1:30 reservation. Would it be possible to reschedule it for 2:30. Also we have one person who cannot make it, so we will only need a table for 5 now. Thank you, - Jane Doe",
     "categories": [
         {

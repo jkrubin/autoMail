@@ -34,7 +34,7 @@ const models = [
   UserPermission,
   DocType,
   Field,
-  DocTypeField
+  DocTypeField,
 ]
 
 const sequelize = new Sequelize({

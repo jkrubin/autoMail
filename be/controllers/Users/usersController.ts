@@ -1,8 +1,11 @@
-import { Request, Response } from "express";
-import { Permission, PermissionRole, User } from "../../models/user";
+import { NextFunction, Request, Response } from "express";
+import { Permission, PermissionRole, User, UserPermission } from "../../models/user";
 import jwt, { Secret, JwtPayload, Jwt } from "jsonwebtoken";
-
 const JWT_SECRET = process.env.JWT_SECRET || 'dev'
+
+export interface AuthRequest extends Request {
+    user?: User;
+}
 
 const getUserInfo = (user: User) => {
     const {id, email, password} = user.toJSON()
@@ -42,29 +45,56 @@ export const login = async(req: Request, res: Response) => {
 
 }
 
-export const checkPermission = async(req: Request, res: Response, next: () => {}, roles: PermissionRole[]) => {
-    const { id } = req.body
-    const token = req.headers['x-access-token'] as any as string
-
-    if(!token) {
-        return res.status(401).send({auth: false, message: 'You are not logged in'})
-    }
-    jwt.verify(token, JWT_SECRET, async (err, token) => {
-        if(err){
-            return res.status(500).send({message: "Your login session has expired"})
-        }else{
-            const user = await User.findOne({where: {id: id}, include: [Permission]})
-            if(!user) {
-                return res.status(500).send({message: "No matching user found"})
-            }
-            console.log(user.permissions)
-            if(user.permissions.some(permission => roles.includes(permission.role))){
-                next();
-            }else{
-                return res.status(403).send({message: "You do not have permission to do this"})
-            }
-
+export const authenticateTokenWithRoles = (roles: PermissionRole[] = []) => {
+    return async (req: AuthRequest, res: Response, next: NextFunction) => {
+        const token = req.headers['x-access-token'] as any as string
+    
+        if(!token) {
+            return res.status(401).send({auth: false, message: 'You are not logged in'})
         }
-    })
+        jwt.verify(token, JWT_SECRET, async (err, decodedUser:any) => {
+            console.log('decoded user:', decodedUser)
+            if(err){
+                return res.status(500).send({message: "Your login session has expired"})
+            }else{
+                const user = await User.findOne({where: {id: decodedUser?.id}, include: [Permission]})
+                if(!user) {
+                    return res.status(500).send({message: "No matching user found"})
+                }
+                if(!roles?.length || user.permissions.some(permission => roles.includes(permission.role))){
+                    req.user = user
+                    next();
+                }else{
+                    return res.status(403).send({message: "You do not have permission to do this"})
+                }
+    
+            }
+        })
+    }
+}
 
+export const createRole = async(req: Request, res: Response) => {
+    const {role} = req.body
+    try{
+        const permission = await Permission.create({role: role})
+        return res.send(permission.toJSON())
+    }catch(err){
+        return res.sendStatus(500)
+    }
+}
+
+export const giveUserRole = async(req: Request, res: Response) => {
+    const {permissionId, userId} = req.body
+    try{
+        const user = await User.findByPk(userId);
+        const permission = await Permission.findByPk(permissionId)
+        if(!user || !permission){
+            return res.sendStatus(404)
+        }
+        await UserPermission.create({userId, permissionId})
+        res.sendStatus(200)
+    }catch(err){
+        console.log(err)
+        res.sendStatus(500)
+    }
 }
