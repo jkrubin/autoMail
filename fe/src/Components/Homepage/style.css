@@ -1,0 +1,52 @@
+.features {
+    padding: 20px;
+    background-color: #f4f4f4; /* Light grey background */
+}
+
+.features-inner {
+    display: flex;
+    flex-direction: column; /* Stack features vertically */
+}
+
+.feature {
+    display: flex; /* Enables flexbox within each feature */
+    align-items: center; /* Vertically centers items within the feature */
+    margin: 20px 0; /* Spacing between each feature */
+    padding: 20px;
+    background-color: #ffffff; /* White background for each feature */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners for the boxes */
+}
+
+.feature-icon {
+    width: 50px; /* Fixed width for the circle */
+    height: 50px; /* Fixed height for the circle */
+    background-color: #007BFF; /* Primary color for the icon background */
+    border-radius: 50%; /* Makes the div a circle */
+    margin-right: 20px; /* Space between the icon and the text content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.feature-title {
+    font-size: 20px; /* Larger font size for titles */
+    font-weight: bold; /* Bold font for titles */
+}
+
+.feature-description {
+    font-size: 16px; /* Readable text size for description */
+}
+
+/* Using flex layout for the content next to the icon */
+.feature-content {
+    display: flex;
+    flex-direction: column; /* Stacks title and description vertically */
+}
+
+/* Optional: Add a sample image or icon inside the circle */
+.feature-icon::after {
+    content: '★'; /* Placeholder icon, replace with an actual image if needed */
+    color: white; /* White color for the icon */
+    font-size: 24px; /* Larger font size for visibility */
+}

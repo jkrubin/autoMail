@@ -1,42 +1,114 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Basic Styles */
+body, html {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.navbar {
+    background-color: #007BFF;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.navbar .nav-links .nav-item {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
 }
 
-.card {
-  padding: 2em;
+.features {
+    background-color: #f4f4f4;
+    padding: 20px;
+    text-align: left;
 }
 
-.read-the-docs {
-  color: #888;
+/* Light Theme */
+.light-theme {
+    --background-color: #FFF;
+    --text-color: #333;
+    --primary-color: #007BFF;
+}
+
+/* Dark Theme */
+.dark-theme {
+    --background-color: #333;
+    --text-color: #FFF;
+    --primary-color: #1E88E5;
+}
+
+body.light-theme {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+body.dark-theme {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.navbar.light-theme, .navbar.dark-theme {
+    background-color: var(--primary-color);
+}
+
+/* Hero and Heading Styles */
+.hero {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eaeaea;
+    margin-bottom: 20px;
+}
+
+h1, h2, h3 {
+    font-weight: 500;
+}
+
+h1 {
+    font-size: 28px;
+    color: #0056b3;
+}
+
+h2 {
+    font-size: 24px;
+    color: #004494;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 20px;
+    color: #333333;
+    margin-bottom: 5px;
+}
+
+button {
+    display: inline-block; /* Allows buttons to sit side by side */
+    margin-right: 10px;
+    padding: 4px 20px; /* Comfortable padding */
+    font-size: 14px; /* Suitable font size */
+    border: none; /* No border */
+    border-radius: 50px; /* High border-radius for pill shape */
+    background-color: #17a2b8; /* Sleek, techy teal color */
+    color: white; /* White text for contrast */
+    cursor: pointer; /* Cursor pointer to indicate it's clickable */
+    display: inline-block; /* Inline-block for better control over positioning */
+    margin-right: 10px; /* Margin to the right to space out multiple buttons */
+}
+
+button:hover {
+    background-color: #138496;
+}
+
+input, textarea {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
 }

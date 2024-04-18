@@ -6,6 +6,6 @@ const router = express.Router()
 router.use(auth.authenticateTokenWithRoles(['USER']))
 router.get(('/'), fieldController.getAllFields)
 router.put('/', fieldController.createNewField)
-router.post('/', fieldController.updateField)
+router.post('/:fieldId', fieldController.updateField)
 
 export default router

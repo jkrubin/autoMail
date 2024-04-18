@@ -21,6 +21,7 @@ export const getDocTypes = async (req: AuthRequest, res: Response) => {
         const docTypesRes = docTypes.map((docType) => {
             const modifiedDocyType = docType.toJSON();
             //ToDo: More mod if needed
+            modifiedDocyType.fields = docType.fields.map(field => field.id)
             return modifiedDocyType
         })
         return res.send(docTypesRes)
@@ -32,9 +33,9 @@ export const getDocTypes = async (req: AuthRequest, res: Response) => {
 
 export const getDocType = async (req: AuthRequest, res: Response) => {
     try{
-        const {userId} = req.body
+        const {user} = req
         const {docTypeId} = req.params
-        const docType = await DocType.findOne({where: {id: docTypeId, userId: userId}, include: [Field]});
+        const docType = await DocType.findOne({where: {id: docTypeId, userId: user?.id}, include: [Field]});
         if(!docType){
             return res.status(404).send();
         }

@@ -19,29 +19,38 @@ const signUser = (user: User) => {
 
 export const register = async(req: Request, res: Response) => {
     const {email, password} = req.body
-    const existingUser = await User.findOne({where: {email: email}})
-    if(existingUser){
-        return res.status(409).send({message: "an account already exists with this email"})
+    try{
+        const existingUser = await User.findOne({where: {email: email}})
+        if(existingUser){
+            return res.status(409).send({message: "an account already exists with this email"})
+        }
+        let newUser = await User.create({email, password})
+        const jwt = signUser(newUser)
+        return res.send({user: newUser.toJSON(), jwt});
+    }catch(err){
+        console.log(err)
+        return res.sendStatus(500)
     }
-    let newUser = await User.create({email, password})
-    const jwt = signUser(newUser)
-    console.log(jwt)
-    newUser = await newUser.update({jwt})
-    return res.send(newUser.toJSON());
 }
 
 export const login = async(req: Request, res: Response) => {
     const {email, password} = req.body
-    let user = await User.findOne({where: {email}})
-    if(!user){
-        return res.status(403).send({message: 'No Account found with this email'})
+    console.log(req.body)
+    try{
+        let user = await User.findOne({where: {email}})
+        if(!user){
+            return res.status(403).send({message: 'No Account found with this email'})
+        }
+        const isPasswordValid = await user.comparePassword(password)
+        if(!isPasswordValid){
+            return res.status(403).send({message: 'Incorrect password'})
+        }
+        const jwt = signUser(user)
+        return res.send({user: user.toJSON(), jwt})
+    }catch(err){
+        console.log(err);
+        return res.sendStatus(500)
     }
-    const isPasswordValid = await user.comparePassword(password)
-    if(!isPasswordValid){
-        return res.status(403).send({message: 'Incorrect password'})
-    }
-    user = await user.update({jwt: signUser(user)})
-    return res.send(user.toJSON())
 
 }
 
@@ -55,7 +64,7 @@ export const authenticateTokenWithRoles = (roles: PermissionRole[] = []) => {
         jwt.verify(token, JWT_SECRET, async (err, decodedUser:any) => {
             console.log('decoded user:', decodedUser)
             if(err){
-                return res.status(500).send({message: "Your login session has expired"})
+                return res.status(440).send({message: "Your login session has expired"})
             }else{
                 const user = await User.findOne({where: {id: decodedUser?.id}, include: [Permission]})
                 if(!user) {

@@ -1,0 +1,90 @@
+/* Base styles for the container */
+.form-container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Inner content styling */
+.inner-content {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+/* Styling for form labels and inputs */
+.inner-content label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 16px;
+}
+
+.inner-content input, .inner-content textarea {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding does not affect width */
+}
+
+/* Options bar at the bottom of forms or sections */
+.options-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 0;
+    gap: 10px;
+}
+
+/* Button styling across the application */
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff; /* Blue for primary actions */
+    color: white;
+    border-radius: 20px; /* Pill-shaped buttons */
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Sub-form for nested structures like fields */
+.sub-form {
+    background-color: #f1f1f1;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Specific styles for displaying fields */
+.field-container {
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.field-container h1 {
+    font-size: 18px;
+    color: #333;
+}
+
+.field-container div {
+    font-size: 14px;
+    color: #666;
+}
+
+.height-display-container{
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+.height-display-filler{
+    height: 999px;
+}

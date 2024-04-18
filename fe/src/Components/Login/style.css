@@ -1,0 +1,67 @@
+/* Styles for the container */
+.login-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    width: 100%;
+    margin: auto; /* Added to center horizontally */
+    margin-top: 22vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Added to center vertically */
+    justify-content: center; /* Added to center horizontally */
+  }
+  
+  /* Styles for the title */
+  .login-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Styles for the form */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Styles for form fields */
+  .login-form-field {
+    margin-bottom: 15px;
+  }
+  
+  /* Styles for inputs */
+  .login-form-field input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  /* Styles for the button */
+  .login-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .login-options{
+    display: flex;
+    margin-top: 5px;
+    justify-content: space-between;
+  }
+
+  .error-text{
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+  }

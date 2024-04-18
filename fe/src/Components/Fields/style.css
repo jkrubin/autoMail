@@ -1,0 +1,28 @@
+.field-form {
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+}
+.field-background {
+    display: white;
+    border-radius: 5px;
+    margin: 5px;
+}
+.field-form-display {
+    display: flex;
+    flex-direction: row;
+}
+
+.field-form h1,h2{
+    margin: 0;
+    text-align: left;
+}
+.field-form-submit {
+    flex: 1;
+    display:flex;
+    justify-content: flex-end;
+    padding: 3px;
+}
+.field-form-submit button {
+    padding: 0 20px;
+}
