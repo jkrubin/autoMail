@@ -6,5 +6,4 @@ export type Field = {
     description: string;
     updatedAt: string;
     createdAt: string;
-    docTypes: number[];
 }

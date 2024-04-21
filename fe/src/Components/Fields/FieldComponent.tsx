@@ -4,12 +4,13 @@ import { useField } from "../../Api/Field";
 import { OptionsBar } from "../Utils/OptionsBar";
 import './style.css'
 import AnimatedHeightDisplay from "../Utils/AnimatedHeightDisplay";
+import ConfirmationModal from "../Utils/ConfirmationModal";
 
 type FieldProps = {
     field:Field
+    fieldActions:any
 }
-const FieldComponent: React.FC<FieldProps> = ({field}) => {
-    const {isLoading, actions: fieldActions} = useField()
+const FieldComponent: React.FC<FieldProps> = ({field, fieldActions}) => {
     const [displayField, setDisplayField] = useState<Field>(field)
     const [isEdit, setIsEdit] = useState(false)
     const contentRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
@@ -27,7 +28,9 @@ const FieldComponent: React.FC<FieldProps> = ({field}) => {
         fieldActions.updateField(displayField)
         setIsEdit(false)
     }
-
+    const handleDelete = () => {
+        fieldActions.deleteField(displayField.id)
+    }
     return(
         <div>
             <div className="field-background">
@@ -54,11 +57,25 @@ const FieldComponent: React.FC<FieldProps> = ({field}) => {
                             />
                         </label>
                         <OptionsBar>
-                            <button onClick={handleSubmit}>Save</button>
+                            <ConfirmationModal
+                                description='Changing the name or description for this field will affect it for all documents it is linked to'
+                                successCallback={handleSubmit}
+                                cancelCallback={()=>{}}
+                            >
+                                <button>Save</button>
+                            </ConfirmationModal>
                             <button onClick={() => {
                                 setDisplayField(field)
                                 setIsEdit(false)
                             }}>Cancel</button>
+                            <ConfirmationModal
+                                description='Are you sure you want to delete this permanantly? This will affect other Document Types this field is linked to.'
+                                successCallback={handleDelete}
+                            >
+                                <button>
+                                    Delete
+                                </button>
+                            </ConfirmationModal>
                         </OptionsBar>
                     </div>
                 ),

@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from './Api/Auth'
 // import 'semantic-ui-css/semantic.min.css'
 import './App.css'
 import DocTypes from './Components/DocTypes'
+import ProcessData from './Components/ProcessData'
 
 const ProtectedRoute: React.FC<PropsWithChildren> = ({children}) => {
   const {isAuth} = useAuth()
@@ -46,6 +47,10 @@ function App() {
                 <Route 
                   path = "/documents/:docTypeId/fields"
                   element={<ProtectedRoute><DocTypes activeTab={'fields'}/></ProtectedRoute>}
+                />
+                <Route 
+                  path = "/process"
+                  element={<ProtectedRoute><ProcessData /></ProtectedRoute>}
                 />
                 <Route
                   path = "/login"

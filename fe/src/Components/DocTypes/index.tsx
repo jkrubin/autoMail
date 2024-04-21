@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from "react"
 import { useDocType } from "../../Api/DocType"
-import { Icon } from 'semantic-ui-react'
+import { Icon, Popup } from 'semantic-ui-react'
 import { DocType } from "../../Api/DocType/types"
 import { useNavigate, useParams } from "react-router-dom"
 import './style.css'
@@ -13,6 +13,7 @@ import { InnerContent } from "../Utils/InnerContent"
 import { OptionsBar } from "../Utils/OptionsBar"
 import { SubForm } from "../Utils/SubForm"
 import AnimatedHeightDisplay from "../Utils/AnimatedHeightDisplay"
+import Tooltip from "../Tooltip"
 type DocTypesProps = {
     activeTab?: 'document' | 'fields' | 'actions' | null
 }
@@ -46,11 +47,12 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
         setEditDocType(false)
         setCurrentDocType(doc || null)
         setDocTypeEdit(doc || emptyDocType)
+        console.log(doc?.fields)
         const linkedFields = fields.filter(field => {
             return doc?.fields?.includes(field.id)
         }) || []
         setCurrentFields(linkedFields)
-    }, [docTypeId, docTypes])
+    }, [docTypeId, docTypes, fields])
 
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) => {
         setDocTypeEdit((prevState) => ({...prevState, [e.target.name]: e.target.value}))
@@ -64,10 +66,37 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
     const handleSelectDocType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         navigate(`/documents/${e.target.value}/document`)
     }
-
-    const handleCreateNew = () => {
-
+    const handleCreateField = async () => {
+        if(currentDocType){
+            const fieldId = await fieldActions.createField({name: 'New Field', description: ''})
+            if(fieldId){
+                docTypeActions.linkFieldToDoc(currentDocType.id, fieldId)
+            }
+        }
     }
+
+    const handleLinkField = (fieldId: number) => {
+        if(currentDocType){
+            docTypeActions.linkFieldToDoc(currentDocType.id, fieldId)
+        }
+    }
+    const handleCreateNew = async () => {
+        const docTypeId = await docTypeActions.createDocType({
+            name: '',
+            description: ''
+        })
+        if(docTypeId) {
+            navigate(`/documents/${docTypeId}/document`)
+        }
+    }
+
+    const linkableFields = fields
+        .filter(field => !currentDocType?.fields?.includes(field.id))
+        .map((field) => (
+            <li key={field.id} className="dropdown-item">
+                <button onClick={() => handleLinkField(field.id)}>{field.name}</button>
+            </li>
+        ))
     return(
         <div className="doc-types-page">
             <div className="hero">
@@ -85,8 +114,9 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
             </div>
             {currentDocType && 
                 <FormContainer>
+                    <h1 style={{textAlign:'start'}}>Document</h1>
                     <InnerContent>
-                        <h1>Document Type: {currentDocType.name}</h1>
+                        <h1>{currentDocType.name}</h1>
                         <AnimatedHeightDisplay 
                             active={isEditDocType? 0 : 1}
                             faces={[(
@@ -98,6 +128,7 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
                                         name="name"
                                         value={docTypeEdit.name}
                                         onChange={handleEditChange}
+                                        placeholder="give a descriptive name for your document type"
                                     />
                                 </label>
                                 <label>
@@ -106,6 +137,7 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
                                         name="description"
                                         value={docTypeEdit.description}
                                         onChange={handleEditChange}
+                                        placeholder="give a description of what you might find in this type of document. Feel free to give examples, although not neccesary!"
                                     />
                                 </label>
                                 <OptionsBar>
@@ -124,26 +156,36 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
                             </div> 
                             )]}
                         />
+                        <Tooltip id='doc-tooltip'>
+                            <p>Each Document Type represents a type of email or other document your assistant will try to categorize.</p>
+                            <p>For the best results give your assistant a descriptive name and a more detailed description about what you might find in this type of document</p>
+                        </Tooltip>
                     </InnerContent>
                     <SubForm>
-                        <h2>Extraction Fields</h2>
+                        <h1>Extraction Fields</h1>
                         {currentFields.map((field) => (
-                            <FieldComponent field={field} />
+                            <FieldComponent key={field.id} field={field} fieldActions={fieldActions} />
                         ))}
+                        <OptionsBar>
+                            <button onClick={handleCreateField}> Create Field</button>
+                            <Popup trigger={<button className="link-field-btn">Link Existing Field</button>} flowing hoverable>
+                                <ul className="dropdown-menu">
+                                    {linkableFields.length?
+                                        linkableFields
+                                        :
+                                        <div className="emptytext">no fields to link</div>
+                                    }
+                                </ul>
+                            </Popup>
+
+                        </OptionsBar>
+                        <Tooltip id='doc-tooltip'>
+                            <p>Extraction Fields are pieces of data that you want to pick out of a Document Type</p>
+                            <p>For the best results, provide a descriptive name for your Extraction Field and a detailed description of where in your document this field is found</p>
+                        </Tooltip>
                     </SubForm>
                 </FormContainer>
             }
-        </div>
-    )
-}
-
-const DocTypeListItem: React.FC<{docType: DocType}> = ({docType}) => {
-    return (
-        <div key={docType.id} className="docTypeCard">
-            <h3>{docType.name}</h3>
-            <p>{docType.description}</p>
-            <p>Last updated: {new Date(docType.updatedAt || '').toLocaleDateString()}</p>
-            <button>Edit</button>  {/* Placeholder for edit functionality */}
         </div>
     )
 }

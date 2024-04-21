@@ -15,22 +15,24 @@ export const useField = () => {
     const getAllFields = async() => {
         try{
             setIsLoading(true)
-            const fields = await fetchAPI<Field[]>('field')
-            setFields(fields)
+            const fieldsRes = await fetchAPI<Field[]>('field')
+            console.log('fields set')
+            setFields(fieldsRes)
             setIsLoading(false)
         }catch(err){
             setIsLoading(false)
         }
     }
 
-    const createField = async(field: Field) => {
+    const createField = async(field: {name: string, description: string}) => {
         setIsLoading(true)
         try{
             const newField = await fetchAPI<Field>('field', {
-                method: 'POST',
+                method: 'PUT',
                 body: JSON.stringify(field)
             })
             setFields((prevState) => [...prevState, newField])
+            return newField.id
         }catch(err){
 
         }finally{
@@ -52,6 +54,17 @@ export const useField = () => {
         }
     }
 
+    const deleteField = async(fieldId: number) => {
+        try{
+            setIsLoading(true)
+            await fetchAPI<any>(`field/${fieldId}`, {
+                method: 'DELETE',
+            })
+            setFields(prevState => prevState.filter(field => field.id !== fieldId))
+        }catch(err){
+
+        }
+    }
     return {
         fields,
         isLoading,
@@ -59,7 +72,8 @@ export const useField = () => {
         actions: {
             getAllFields,
             createField,
-            updateField
+            updateField,
+            deleteField
         }
     }
 }

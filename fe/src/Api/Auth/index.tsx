@@ -25,8 +25,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [isAuth, setIsAuth] = useState<"TRUE" | "FALSE" | "PENDING">("PENDING")
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const navigate = useNavigate()
-    const location = useLocation()
     const api = useApi()
     useEffect(() => {
         // Optionally load the token from local storage or other persisting storage on initial load
@@ -47,13 +45,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             setIsAuth("TRUE")
         }
     }, [token, user])
-
-    // useEffect(() => {
-    //     if(user && token){
-    //         console.log(`navigating`,location.pathname)
-    //         navigate('/')
-    //     }
-    // },[user, token])
 
     const login = async ({email, password}: LoginParams) => {
         try{

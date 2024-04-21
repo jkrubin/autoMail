@@ -112,3 +112,25 @@ input, textarea {
     border-radius: 4px;
     width: 100%;
 }
+
+/* Warning Button Style */
+.btn-warning {
+    background-color: #ff9800; /* Orange */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-warning:hover {
+    background-color: #e68900; /* Darker shade of orange */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Danger Button Style */
+.btn-danger {
+    background-color: #f44336; /* Red */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f; /* Darker shade of red */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
