@@ -26,7 +26,7 @@ const generateMessages = (context: string, task: string): ChatCompletionMessageP
         }    
     ]
 }
-export const categorizeText = async (docTypes: DocType[], text: string) => {
+export const categorizeText = async (docTypes: DocType[], text: string): Promise<DocType> => {
     const categoriesFromDocTypes: string[] = docTypes.map((docType) => {
         return `\nCategory: ${docType.get('name')}
                 \n\tIdentifier: ${docType.get('snakeName')}
@@ -70,15 +70,20 @@ export const categorizeText = async (docTypes: DocType[], text: string) => {
     try{
         const toolCalls = openAiRes?.choices[0]?.message?.tool_calls
         if(toolCalls?.length){
-            console.log(toolCalls)
-            const category = toolCalls[0].function.arguments
-            console.log(category)
-            return category
+            const categoryJSON = JSON.parse(toolCalls[0].function.arguments)
+            const {category} = categoryJSON
+            console.log('category is', category)
+            const matchingDocument = docTypes.find((doc)=> doc.snakeName === category)
+            if(matchingDocument) {
+                return matchingDocument
+            }else{
+                throw new Error(`could not find ${category} in documents`)
+            }
         }
-
+        throw new Error(`Assistant did not use tool calls`)
     }catch(err){
         console.log(err)
-        return false
+        throw err
     }
 }
 
@@ -91,7 +96,7 @@ export const extractValuesFromText = async (docType: DocType, text: string) => {
             description: field.get('description')
         }
     }
-    const extractTool = {
+    const extractTool: ChatCompletionTool = {
         type: "function",
         function: {
             name: docType.get('snakeName'),
@@ -103,4 +108,32 @@ export const extractValuesFromText = async (docType: DocType, text: string) => {
             }
         }
     }
+    const context = `Read the Context text and extract the following data points from the text, the following is each data point name and description\n${docType.fields.map(field => `\n${field.snakeName} - ${field.description}`)}`
+
+    const messages: ChatCompletionMessageParam[] = generateMessages(context, text)
+    const openAiRes: ChatCompletion = await openai.chat.completions.create({
+        messages: messages,
+        model: OPENAI_MODEL,
+        tools: [extractTool],
+        tool_choice: {
+            type: "function",
+            function: {
+                name: extractTool.function.name
+            }
+        }
+    })
+    console.log(openAiRes)
+    try{
+        const toolCalls = openAiRes?.choices[0]?.message?.tool_calls
+        if(toolCalls?.length){
+            const fields = JSON.parse(toolCalls[0].function.arguments)
+            console.log('Fields: ',fields)
+            return fields
+        }
+        throw new Error(`Assistant did not use tool calls`)
+    }catch(err){
+        console.log(err)
+        throw err
+    }
+
 }

@@ -1,4 +1,4 @@
-import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, CreatedAt, DataType, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
+import { AllowNull, BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, CreatedAt, DataType, ForeignKey, HasMany, Model, Table, UpdatedAt } from "sequelize-typescript";
 import { User } from "./user";
 import { Field } from "./field";
 
@@ -40,16 +40,17 @@ export class DocType extends Model {
 
     @BelongsToMany(() => Field, () => DocTypeField)
     fields!: Field[];
-  
 }
 
 @Table
 export class DocTypeField extends Model {
     @ForeignKey(() => DocType)
+    @AllowNull(false)
     @Column
     docTypeId!: number;
 
     @ForeignKey(() => Field)
+    @AllowNull(false)
     @Column
     fieldId!: number;
 }

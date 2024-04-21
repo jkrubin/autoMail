@@ -8,5 +8,6 @@ router.get('/:docTypeId', docTypeController.getDocType)
 router.put('/', docTypeController.createDocType)
 router.post('/:docTypeId', docTypeController.updateDocType)
 router.post('/:docTypeId/link/:fieldId', docTypeController.linkFieldToDoc)
+router.post('/:docTypeId/link/', docTypeController.createFieldAndLink)
 
 export default router

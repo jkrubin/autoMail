@@ -21,6 +21,7 @@ export const updateField = async (req: AuthRequest, res: Response) => {
         if(!field) {
             return res.status(404).send({message: 'No Field Found'})
         }
+        await field.update(req.body)
         return res.send(field.toJSON())
     }catch(err){
         console.log(err)
@@ -36,5 +37,17 @@ export const getAllFields = async (req: AuthRequest, res: Response) => {
     }catch(err){
         console.log(err)
         return res.status(500).send()
+    }
+}
+
+export const deleteField = async (req: AuthRequest, res: Response) => {
+    try{
+        const {user} = req
+        const {fieldId} = req.params
+        const field = await Field.findOne({where: {id: fieldId, userId: user?.id}})
+        await field?.destroy()
+        return res.status(200).send({message: 'OK'})
+    }catch(err){
+        return res.status(500).send({message: 'unable to delete field'})
     }
 }
