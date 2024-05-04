@@ -7,6 +7,8 @@ Email goes in. Data comes out
     - `OPENAI_API_KEY` - {your OpenAi API key}
 
   2. Start the application
-    - Start Docker Daemon
-    - docker-compose up --build
-    - Navigate your browser to [http://localhost:8080](http://localhost:8080)
+  ```
+    docker-compose up --build
+  ```
+    
+  3. Navigate your browser to [http://localhost:8080](http://localhost:8080)
