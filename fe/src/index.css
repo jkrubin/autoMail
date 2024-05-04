@@ -3,7 +3,14 @@
     width: 100%;
     position: relative;
 }
-
+.app .page {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  color: #333333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 body{
     margin: 0;
 }

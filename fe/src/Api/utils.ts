@@ -1,7 +1,7 @@
 import { useToast } from "../Context/toast";
 import { AuthContextType, useAuth } from "./Auth";
 
-export const API_URL = process.env.NODE_ENV === 'production' ? "undefined" : "localhost:8080"
+export const API_URL = "localhost:8080"
 export const API_ENDPOINT = `http://${API_URL}/v1`
 
 export const useApi = () => {

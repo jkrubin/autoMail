@@ -1,21 +1,30 @@
 version: '3.8'
-services: 
-  client:
-    build: ./fe
-    container_name: fe
-    stdin_open: true
-    ports: 
-      - '3000:3000'
-    volumes:
-      - ./fe:/fe
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
     environment:
-      - WATCHPACK_POLLING=true
-  api: 
-    build: ./be
-    container_name: be
-    ports: 
-      - '8080:8080'
-    volumes: 
-      - ./be:/be
-    environment: 
-      - WATCHPACK_POLLING=true
+      NODE_ENV: production
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DB_HOST: db
+      DB_USER: mail
+      DB_PASS: admin
+      DB_NAME: automail
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: automail
+      MYSQL_USER: mail
+      MYSQL_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

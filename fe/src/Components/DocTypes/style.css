@@ -1,11 +1,4 @@
-.doc-types-page {
-    max-width: 960px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    color: #333333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+
 .doc-type-controls {
     display: flex;
     justify-content: space-between;

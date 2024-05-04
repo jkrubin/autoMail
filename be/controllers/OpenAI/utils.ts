@@ -122,12 +122,10 @@ export const extractValuesFromText = async (docType: DocType, text: string) => {
             }
         }
     })
-    console.log(openAiRes)
     try{
         const toolCalls = openAiRes?.choices[0]?.message?.tool_calls
         if(toolCalls?.length){
             const fields = JSON.parse(toolCalls[0].function.arguments)
-            console.log('Fields: ',fields)
             return fields
         }
         throw new Error(`Assistant did not use tool calls`)

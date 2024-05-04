@@ -64,6 +64,7 @@ body.dark-theme {
     padding-bottom: 20px;
     border-bottom: 2px solid #eaeaea;
     margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 h1, h2, h3 {
@@ -90,7 +91,7 @@ h3 {
 button {
     display: inline-block; /* Allows buttons to sit side by side */
     margin-right: 10px;
-    padding: 4px 20px; /* Comfortable padding */
+    padding: 10px 20px; 
     font-size: 14px; /* Suitable font size */
     border: none; /* No border */
     border-radius: 50px; /* High border-radius for pill shape */

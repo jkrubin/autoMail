@@ -69,6 +69,21 @@ export const updateDocType = async (req: AuthRequest, res: Response) => {
     }
 }
 
+export const deleteDocType = async (req: AuthRequest, res: Response) => {
+    try{
+        const {user} = req
+        const {docTypeId} = req.params
+        const docType = await DocType.findOne({where: {id: docTypeId, userId: user?.id}})
+        if(!docType){
+            return res.status(404).send({message: 'Could not find Document Type to delete'})
+        }
+        await docType.destroy()
+        return res.status(200).send({message: 'success'})
+    }catch(e) {
+        console.log(e)
+        return res.status(500).send()
+    }
+}
 export const linkFieldToDoc = async (req: AuthRequest, res: Response) => {
     try{
         const {user} = req

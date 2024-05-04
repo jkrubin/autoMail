@@ -1,27 +1,20 @@
-import React, { FormEvent, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDocType } from "../../Api/DocType"
-import { Icon, Popup } from 'semantic-ui-react'
-import { DocType } from "../../Api/DocType/types"
+import { Popup } from 'semantic-ui-react'
+import { DocType, emptyDocType } from "../../Api/DocType/types"
 import { useNavigate, useParams } from "react-router-dom"
 import './style.css'
 import { useField } from "../../Api/Field"
-import { Field } from "../../Api/Field/types"
-import FieldComponent from "../Fields/FieldComponent"
-import { BottomBar, EditableDisplay } from "../Utils"
+import { Field, FieldInput, emptyField } from "../../Api/Field/types"
 import { FormContainer } from "../Utils/FormContainer"
 import { InnerContent } from "../Utils/InnerContent"
 import { OptionsBar } from "../Utils/OptionsBar"
 import { SubForm } from "../Utils/SubForm"
-import AnimatedHeightDisplay from "../Utils/AnimatedHeightDisplay"
 import Tooltip from "../Tooltip"
+import DocTypeDisplay from "./DocTypeDisplay"
+import FieldList from "../Fields/FieldList"
 type DocTypesProps = {
     activeTab?: 'document' | 'fields' | 'actions' | null
-}
-const emptyDocType: DocType = {
-    id: -1,
-    name: '',
-    description: '',
-    snakeName: ''
 }
 const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
     //API Hooks
@@ -29,10 +22,10 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
     const {fields, isLoading: isFieldsLoading, error: fieldsError, actions: fieldActions} = useField()
     //DocTypes State
     const [currentDocType, setCurrentDocType] = useState<DocType | null>(null)
-    const [isEditDocType, setEditDocType] = useState<boolean>(false)
-    const [docTypeEdit, setDocTypeEdit] = useState<DocType>({...emptyDocType})
     //Fields State
     const [currentFields, setCurrentFields] = useState<(Field)[]>([])
+    const [newField, setNewField] = useState<boolean>(false)
+
     const navigate = useNavigate()
     const {docTypeId} = useParams()
 
@@ -44,9 +37,7 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
     useEffect(() => {
         //Set currently selected doc from url, on url change or state change
         const doc = docTypes.find(doc => doc.id === parseInt(docTypeId || '0'))
-        setEditDocType(false)
         setCurrentDocType(doc || null)
-        setDocTypeEdit(doc || emptyDocType)
         console.log(doc?.fields)
         const linkedFields = fields.filter(field => {
             return doc?.fields?.includes(field.id)
@@ -54,23 +45,29 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
         setCurrentFields(linkedFields)
     }, [docTypeId, docTypes, fields])
 
-    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-        setDocTypeEdit((prevState) => ({...prevState, [e.target.name]: e.target.value}))
+    const saveChanges = async(docType: DocType) => {
+        docTypeActions.updateDocType(docType)
     }
-    const saveChanges = async() => {
-        docTypeActions.updateDocType(docTypeEdit)
-    }
-    const cancelChanges = () => {
-        setEditDocType(false)
+
+    const deleteDoc = async(docTypeId: number) => {
+        console.log(`delete doc`)
+        await docTypeActions.deleteDocType(docTypeId)
+        console.log('navy')
+        navigate(`/documents/`)
     }
     const handleSelectDocType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         navigate(`/documents/${e.target.value}/document`)
     }
-    const handleCreateField = async () => {
+    const handleNewField = () => {
+        setNewField(true)
+    }
+    const handleCreateField = async (newField: FieldInput) => {
         if(currentDocType){
-            const fieldId = await fieldActions.createField({name: 'New Field', description: ''})
+            const {name, description} = newField
+            const fieldId = await fieldActions.createField({name, description})
             if(fieldId){
-                docTypeActions.linkFieldToDoc(currentDocType.id, fieldId)
+                await docTypeActions.linkFieldToDoc(currentDocType.id, fieldId)
+                setNewField(false)
             }
         }
     }
@@ -98,7 +95,7 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
             </li>
         ))
     return(
-        <div className="doc-types-page">
+        <div className="page">
             <div className="hero">
                 <h1>My Document Types</h1>
                 <p>Review and edit your Document Types</p>
@@ -116,58 +113,22 @@ const DocTypes: React.FC<DocTypesProps> = ({activeTab}) => {
                 <FormContainer>
                     <h1 style={{textAlign:'start'}}>Document</h1>
                     <InnerContent>
-                        <h1>{currentDocType.name}</h1>
-                        <AnimatedHeightDisplay 
-                            active={isEditDocType? 0 : 1}
-                            faces={[(
-                                <form>
-                                <label>
-                                    Name:
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={docTypeEdit.name}
-                                        onChange={handleEditChange}
-                                        placeholder="give a descriptive name for your document type"
-                                    />
-                                </label>
-                                <label>
-                                    Description:
-                                    <textarea
-                                        name="description"
-                                        value={docTypeEdit.description}
-                                        onChange={handleEditChange}
-                                        placeholder="give a description of what you might find in this type of document. Feel free to give examples, although not neccesary!"
-                                    />
-                                </label>
-                                <OptionsBar>
-                                    <button type="button" onClick={saveChanges}>Save</button>
-                                    <button type="button" onClick={cancelChanges}>Cancel</button>
-                                </OptionsBar>
-                            </form> 
-                            ),(
-                            <div>
-                                <div className="doc-type-description">
-                                    {currentDocType.description}
-                                </div>
-                                <OptionsBar>
-                                    <button onClick={() => setEditDocType(true)}>Edit</button>
-                                </OptionsBar>
-                            </div> 
-                            )]}
+                        <DocTypeDisplay 
+                            displayDocType={currentDocType}
+                            onSaveCB={saveChanges}
+                            deleteDocCB={deleteDoc}
                         />
-                        <Tooltip id='doc-tooltip'>
-                            <p>Each Document Type represents a type of email or other document your assistant will try to categorize.</p>
-                            <p>For the best results give your assistant a descriptive name and a more detailed description about what you might find in this type of document</p>
-                        </Tooltip>
                     </InnerContent>
                     <SubForm>
                         <h1>Extraction Fields</h1>
-                        {currentFields.map((field) => (
-                            <FieldComponent key={field.id} field={field} fieldActions={fieldActions} />
-                        ))}
+                        <FieldList 
+                            fields={currentFields}
+                            createFieldCB={handleCreateField}
+                            hasNewField={newField}
+                            setNewField={setNewField}
+                        />
                         <OptionsBar>
-                            <button onClick={handleCreateField}> Create Field</button>
+                            <button onClick={handleNewField}> Create Field</button>
                             <Popup trigger={<button className="link-field-btn">Link Existing Field</button>} flowing hoverable>
                                 <ul className="dropdown-menu">
                                     {linkableFields.length?

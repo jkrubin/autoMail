@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import './style.css'
 import { Link, Navigate } from "react-router-dom";
 import { FormInput } from "semantic-ui-react";
-import { ToastContainer, toast} from 'react-toastify'
 import { useToast } from "../../Context/toast";
 import { useAuth } from "../../Api/Auth";
 const Login: React.FC<{isRegister: boolean}> = ({isRegister}) => {
@@ -37,14 +36,20 @@ const Login: React.FC<{isRegister: boolean}> = ({isRegister}) => {
         e.preventDefault()
         const {email, password} = formData
         try{
-            login({email,password})
+            await login({email,password})
         }catch(err){
 
         }
     }
 
-    const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        const {email, password} = formData
+        try{
+            await register({email, password})
+        }catch(err){
+
+        }
     }
 
     return (
@@ -54,7 +59,7 @@ const Login: React.FC<{isRegister: boolean}> = ({isRegister}) => {
                 <h2 className="login-title">{isRegister? "Register" : "Login"}</h2>
                 <form className="login-form" onSubmit={isRegister? handleRegister : handleLogin}>
                     <div className="login-form-field">
-                    <input
+                    <FormInput
                         type="input"
                         name="email"
                         value={formData.email}
@@ -106,7 +111,6 @@ const Login: React.FC<{isRegister: boolean}> = ({isRegister}) => {
                 </form>
                 </>
             </div>
-            <ToastContainer />
         </div>
     );
 }

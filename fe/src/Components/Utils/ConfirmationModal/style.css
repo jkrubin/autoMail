@@ -1,5 +1,5 @@
 .modal.ui{
-    width: auto;
+    width: auto !important;
 }
 .modal-content {
     background-color: #ffffff;

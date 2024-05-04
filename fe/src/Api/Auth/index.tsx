@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, PropsWithChildren } from 'react';
 import { User, UserResponse } from './types';
 import { useApi } from '../utils';
-import { useLocation, useNavigate } from 'react-router-dom';
 interface LoginParams {
     email:string;
     password:string;
@@ -84,6 +83,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const logout = () => {
         setUser(null);
         setToken(null);
+        setIsAuth("FALSE")
         localStorage.removeItem('token');
     };
 

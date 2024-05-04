@@ -8,3 +8,14 @@ export type DocType = {
     userId?: number;
     fields?: number[]
 }
+
+export type DocTypeInput = {
+    name: string,
+    description: string,
+}
+export const emptyDocType: DocType = {
+    id: -1,
+    name: '',
+    description: '',
+    snakeName: ''
+}

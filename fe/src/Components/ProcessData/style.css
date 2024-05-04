@@ -1,3 +1,124 @@
 textarea{
     height: 250px;
 }
+
+.extraction-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px; /* Adds space between entries */
+    overflow: hidden; /* Ensures content does not overflow the container */
+    background-color: white;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.extraction-date {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #333;
+    white-space: nowrap; /* Prevents date from wrapping */
+    font-size: 1.3em;
+}
+
+.extraction-text {
+    color: #666;
+    font-size: 1.2em; /* Slightly smaller text size */
+    overflow: hidden; /* Prevents content from overflowing */
+    white-space: nowrap; /* Keeps the text on one line */
+    text-overflow: ellipsis; /* Adds ellipsis when text overflows */
+    flex-grow: 1; /* Takes up the remaining space */
+}
+
+.extraction-container {
+    display: flex;
+    justify-content: space-between; /* This spreads the children across the available space */
+    align-items: flex-start; /* Aligns children at the top */
+    padding: 20px;
+}
+
+.input-text-container, .extracted-data-container {
+    flex: 1; /* Each child takes up equal amount of space */
+    margin-right: 10px; /* Space between the containers */
+}
+
+input-text-container:last-child, .extracted-data-container:last-child {
+    margin-right: 0; /* Removes margin from the last child */
+}
+
+textarea {
+    width: 100%; /* Full width of the container */
+    height: 200px; /* Fixed height for textarea */
+}
+
+.json-view {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.extraction-docs {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Style for the popup trigger */
+.extraction-doc-trigger {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #007bff; /* Theme blue */
+    color: white;
+    border-radius: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+    font-size: 1.2em;
+}
+
+.extraction-doc-trigger:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* General styles for the popup content */
+.extraction-popup-content {
+    color: #333;
+    font-size: 16px;
+    width: 300px; /* Adjust width as necessary */
+}
+
+.extraction-popup-content h3 {
+    color: #0056b3; /* Consistent with the theme */
+    margin-bottom: 10px;
+}
+
+/* Style for the list inside the popup */
+.extraction-popup-content ul {
+    list-style: none; /* Removes default list styling */
+    padding: 0;
+    margin: 0;
+}
+
+.extraction-popup-content li {
+    padding: 5px 0; /* Spacing between items */
+    border-bottom: 1px solid #eee; /* Subtle separator */
+}
+
+.extraction-docs-container {
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 1px #666;
+    margin-bottom: 10px;
+}
+.extraction-popup-content li:last-child {
+    border-bottom: none; /* No border for the last item */
+}
+
+.process-button{
+    font-size: 1.3em;
+    padding: 10px 40px;
+}

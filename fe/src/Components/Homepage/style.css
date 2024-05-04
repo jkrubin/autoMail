@@ -19,7 +19,7 @@
 }
 
 .feature-icon {
-    width: 50px; /* Fixed width for the circle */
+    min-width: 50px; /* Fixed width for the circle */
     height: 50px; /* Fixed height for the circle */
     background-color: #007BFF; /* Primary color for the icon background */
     border-radius: 50%; /* Makes the div a circle */
@@ -49,4 +49,35 @@
     content: '★'; /* Placeholder icon, replace with an actual image if needed */
     color: white; /* White color for the icon */
     font-size: 24px; /* Larger font size for visibility */
+}
+
+.hero-description{
+    font-size: 1.3em;
+    font-weight: 200;
+    color: #636363;
+}
+
+.homepage .sub-form{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 0px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.features h2 {
+    margin-bottom: 15px;
+}
+
+.inline-link {
+    color: #007bff !important; /* Blue color for links */
+    font-weight: normal; /* Optional: to make it stand out if needed */
+    text-decoration: none; /* Removes the underline */
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
+    cursor: pointer; /* Cursor to indicate it's clickable */
+}
+
+.inline-link:hover, .inline-link:focus {
+    color: #0056b3; /* Darker blue on hover or focus for better visibility */
+    text-decoration: underline; /* Adds underline on hover/focus to highlight interactivity */
 }

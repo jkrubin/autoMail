@@ -1,9 +1,20 @@
 export type Field = {
     id: number;
-    userId: number;
     name: string;
-    snakeName: string;
     description: string;
-    updatedAt: string;
-    createdAt: string;
+    snakeName: string;
+    userId?: number;
+    updatedAt?: string;
+    createdAt?: string;
+}
+
+export const emptyField: Field = {
+    id: -1,
+    name: '',
+    description: '',
+    snakeName: ''
+}
+export type FieldInput = {
+    name: string, 
+    description: string,
 }

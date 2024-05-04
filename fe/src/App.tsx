@@ -15,6 +15,9 @@ import { AuthProvider, useAuth } from './Api/Auth'
 import './App.css'
 import DocTypes from './Components/DocTypes'
 import ProcessData from './Components/ProcessData'
+import Fields from './Components/Fields'
+import { DocTypeProvider } from './Api/DocType'
+import { FieldProvider } from './Api/Field'
 
 const ProtectedRoute: React.FC<PropsWithChildren> = ({children}) => {
   const {isAuth} = useAuth()
@@ -33,39 +36,51 @@ function App() {
     <BrowserRouter>
       <ToastProvider>
         <AuthProvider>
-          <div id='app'>
-              <Navbar />
-              <Routes>
-                <Route 
-                  path = "/documents"
-                  element={<ProtectedRoute><DocTypes /></ProtectedRoute>}
-                />
-                <Route 
-                  path = "/documents/:docTypeId/document"
-                  element={<ProtectedRoute><DocTypes activeTab={'document'}/></ProtectedRoute>}
-                />
-                <Route 
-                  path = "/documents/:docTypeId/fields"
-                  element={<ProtectedRoute><DocTypes activeTab={'fields'}/></ProtectedRoute>}
-                />
-                <Route 
-                  path = "/process"
-                  element={<ProtectedRoute><ProcessData /></ProtectedRoute>}
-                />
-                <Route
-                  path = "/login"
-                  element={<Login isRegister={false}/>}
-                />
-                <Route 
-                  path = "/register"
-                  element={<Login isRegister={true}/>}
-                />
-                <Route 
-                  path ="/"
-                  element={<ProtectedRoute><Homepage /></ProtectedRoute>}
-                />
-              </Routes>
-          </div>
+          <DocTypeProvider>
+            <FieldProvider>
+              <div id='app'>
+                  <Navbar />
+                  <Routes>
+                    <Route 
+                      path = "/documents"
+                      element={<ProtectedRoute><DocTypes /></ProtectedRoute>}
+                    />
+                    <Route 
+                      path = "/documents/:docTypeId/document"
+                      element={<ProtectedRoute><DocTypes activeTab={'document'}/></ProtectedRoute>}
+                    />
+                    <Route 
+                      path = "/documents/:docTypeId/fields"
+                      element={<ProtectedRoute><DocTypes activeTab={'fields'}/></ProtectedRoute>}
+                    />
+                    <Route
+                      path = "/fields"
+                      element={<ProtectedRoute><Fields/></ProtectedRoute>}
+                    />
+                    <Route 
+                      path = "/process"
+                      element={<ProtectedRoute><ProcessData /></ProtectedRoute>}
+                    />
+                    <Route 
+                      path = "/process/:extractionId"
+                      element={<ProtectedRoute><ProcessData /></ProtectedRoute>}
+                    />
+                    <Route
+                      path = "/login"
+                      element={<Login isRegister={false}/>}
+                    />
+                    <Route 
+                      path = "/register"
+                      element={<Login isRegister={true}/>}
+                    />
+                    <Route 
+                      path ="/"
+                      element={<ProtectedRoute><Homepage /></ProtectedRoute>}
+                    />
+                  </Routes>
+              </div>
+            </FieldProvider>
+          </DocTypeProvider>
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>

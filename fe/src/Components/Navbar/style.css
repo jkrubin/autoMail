@@ -1,0 +1,7 @@
+.nav-links{
+    display: flex;
+}
+
+.nav-item:hover{
+    cursor: pointer;
+}

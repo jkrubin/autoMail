@@ -5,43 +5,54 @@ import { OptionsBar } from "../Utils/OptionsBar";
 import './style.css'
 import AnimatedHeightDisplay from "../Utils/AnimatedHeightDisplay";
 import ConfirmationModal from "../Utils/ConfirmationModal";
+import { useToast } from "../../Context/toast";
 
 type FieldProps = {
     field:Field
-    fieldActions:any
+    isNewField?: boolean
+    submitCB: (field: Field) => Promise<any>  
+    deleteCB: () => Promise<any>
+    cancelCB?: () => any
 }
-const FieldComponent: React.FC<FieldProps> = ({field, fieldActions}) => {
+type DisplayFaces = 'SHORT' | 'LONG' | 'EDIT'
+const FieldComponent: React.FC<FieldProps> = ({field, submitCB, deleteCB, isNewField = false, cancelCB = () => {}}) => {
     const [displayField, setDisplayField] = useState<Field>(field)
-    const [isEdit, setIsEdit] = useState(false)
+    const [displayFace, setDisplayFace] = useState<DisplayFaces>(isNewField? 'EDIT' : 'SHORT')
     const contentRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
+    const longRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
     const formRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
-    const [contentHeight, setContentHeight] = useState<number>(0)
+    const {toast} = useToast()
 
-    useEffect(() => {
-        console.log(formRef.current?.scrollHeight, contentRef.current?.scrollHeight)
-        setContentHeight(isEdit? formRef.current?.scrollHeight || 0 : contentRef.current?.scrollHeight || 0)
-    }, [isEdit, contentRef, formRef])
     const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setDisplayField(prevState => ({...prevState, [e.target.name]: e.target.value}))
     }
-    const handleSubmit = () => {
-        fieldActions.updateField(displayField)
-        setIsEdit(false)
+    const handleSubmit = async () => {
+        const {name, description} = displayField
+        if(!name || !description){
+            toast.error('Please provide a name and description for your Extraction Field')
+            return
+        }
+        await submitCB(displayField)
+        setDisplayFace('LONG')
     }
-    const handleDelete = () => {
-        fieldActions.deleteField(displayField.id)
+    const handleDelete = async () => {
+        await deleteCB()
     }
     return(
         <div>
             <div className="field-background">
                 <AnimatedHeightDisplay 
-                    active={isEdit? 0 : 1} 
+                    active={displayFace === 'EDIT'? 0
+                        :displayFace === 'SHORT'? 1 
+                        : 2
+                    } 
                     faces={[(
                     <div ref={formRef} className="field-form">
                         <label>
                             name
                             <input 
                                 className="field-input"
+                                placeholder={`eg: "Client Name", "New Meeting Time"`}
                                 name="name"
                                 value={displayField.name}
                                 onChange={handleChange}
@@ -51,6 +62,7 @@ const FieldComponent: React.FC<FieldProps> = ({field, fieldActions}) => {
                             description
                             <input 
                                 className="field-input"
+                                placeholder={`eg: "Name of the email sender"`}
                                 name="description"
                                 value={displayField.description}
                                 onChange={handleChange}
@@ -65,8 +77,9 @@ const FieldComponent: React.FC<FieldProps> = ({field, fieldActions}) => {
                                 <button>Save</button>
                             </ConfirmationModal>
                             <button onClick={() => {
+                                cancelCB()
                                 setDisplayField(field)
-                                setIsEdit(false)
+                                setDisplayFace('SHORT')
                             }}>Cancel</button>
                             <ConfirmationModal
                                 description='Are you sure you want to delete this permanantly? This will affect other Document Types this field is linked to.'
@@ -82,12 +95,22 @@ const FieldComponent: React.FC<FieldProps> = ({field, fieldActions}) => {
                 (
                     <>
                         <div className="field-form field-form-display" ref={contentRef}>
-                            <h2>{displayField.name}</h2>
+                            <h2 onClick={() => setDisplayFace('LONG')}>{displayField.name || 'unnamed'}</h2>
                             <div className="field-form-submit">
-                                <button onClick={() => setIsEdit(true)}>Edit</button>
+                                <button onClick={() => setDisplayFace('EDIT')}>Edit</button>
                             </div>
                         </div>
                     </>  
+                ),(
+                    <>
+                        <div className="field-form field-form-display" ref={longRef}>
+                            <h2 onClick={()=> setDisplayFace('SHORT')}>{displayField.name}</h2>
+                            <div className="field-form-submit">
+                                <button onClick={() => setDisplayFace('EDIT')}>Edit</button>
+                            </div>
+                        </div>
+                        <div className="field-description">{displayField.description}</div>
+                    </>
                 )]}/>
             </div>
         </div>

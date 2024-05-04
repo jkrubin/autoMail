@@ -1,15 +1,19 @@
-import { AfterFind, BeforeCreate, BeforeUpdate, BelongsTo, Column, CreatedAt, DataType, Model, Table, UpdatedAt } from "sequelize-typescript";
+import { AfterFind, BeforeCreate, BeforeUpdate, BelongsTo, Column, CreatedAt, DataType, ForeignKey, Model, Table, UpdatedAt } from "sequelize-typescript";
 import { User } from "./user";
 import { DocType } from "./docType";
 
 @Table
 export class Extraction extends Model {
 
+    @ForeignKey(() => User)
+    @Column
+    userId!: number;
+
     @Column(DataType.TEXT)
     text!: string;
 
     @Column(DataType.TEXT)
-    extractedJSON!: string
+    extractedJSON!: any
 
     @CreatedAt
     createdAt!: string;
@@ -17,23 +21,17 @@ export class Extraction extends Model {
     @UpdatedAt
     updatedAt!: string;
 
-    @BeforeCreate
-    @BeforeUpdate
-    static createSnakeCaseName(extraction: Extraction){
-        if(extraction.changed('extractedJSON')){
-            const extractedJSON = extraction.get('extractedJSON')
-            extraction.extractedJSON = JSON.stringify(extractedJSON)
-        }
-    }
-
-    @AfterFind
-    static parseJSON(extraction: Extraction){
-        extraction.extractedJSON = JSON.parse(extraction.extractedJSON)
-    }
+    // @AfterFind
+    // static parseJSON(extraction: Extraction | Extraction[]){
+    //     if(extraction.constructor === Array){
+    //         for(let i=0; i < extraction.length; i++){
+    //             extraction[i].extractedJSON = JSON.parse(extraction[i].extractedJSON)
+    //         }
+    //     }else{
+    //         (extraction as Extraction).extractedJSON = JSON.parse((extraction as Extraction).extractedJSON)
+    //     }
+    // }
     @BelongsTo(() => User)
     user!: User;
-    
-    @BelongsTo(() => DocType)
-    docType!: DocType;
   
 }

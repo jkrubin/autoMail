@@ -25,6 +25,14 @@ export const register = async(req: Request, res: Response) => {
             return res.status(409).send({message: "an account already exists with this email"})
         }
         let newUser = await User.create({email, password})
+        const userRole = await Permission.findOne({where: {role: 'USER'}})
+        if(!userRole){
+            throw new Error('User Role not found in db')
+        }
+        let permission = await UserPermission.create({
+            userId: newUser.id,
+            permissionId: userRole.id
+        })
         const jwt = signUser(newUser)
         return res.send({user: newUser.toJSON(), jwt});
     }catch(err){
@@ -105,5 +113,17 @@ export const giveUserRole = async(req: Request, res: Response) => {
     }catch(err){
         console.log(err)
         res.sendStatus(500)
+    }
+}
+
+export const seedRoles = async() => {
+    try{
+        const userRole = await Permission.findOne({where: {role: 'USER'}})
+        if(!userRole){
+            await Permission.create({role: 'USER'})
+        }
+    }catch(err){
+        console.log(err)
+        throw new Error('Could not seed database with Permission roles')
     }
 }
