@@ -22,6 +22,9 @@ const DocTypeDisplay: React.FC<DocTypeProps> = ({displayDocType, onSaveCB, delet
         setIsEdit(editProp)
     }, [editProp])
 
+    useEffect(() => {
+        setDocTypeEdit(displayDocType)
+    }, [displayDocType])
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) => {
         setDocTypeEdit((prevState) => ({...prevState, [e.target.name]: e.target.value}))
     }
