@@ -5,6 +5,13 @@ AutoMail is your AI powered assistant built to read your email and delegate acti
 AutoMail v1: 
 Email goes in. Data comes out
 
+## The problem
+ - A lot of the work that we don't want to do involves 
+  1. reading an email or ticket
+  2. seeing it is the same as 100 other emails
+  3. performing a small monotonous task
+## The solution
+ - Train an AI assistant by telling it the types of emails you recieve, what data is important in those emails, and what actions should happen subsequently 
 ## Features 
  - Define Types of emails you will want to automatically parse called Document Types
  - Define Data points that you want extracted from your email called Extraction Fields
